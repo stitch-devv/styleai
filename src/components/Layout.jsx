@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { useAuth } from '../auth'
+import { useCart } from '../cart'
 export default function Layout() {
   const { user, signOut } = useAuth()
+  const { count } = useCart()
   const [open, setOpen] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('theme', theme) }, [theme])
@@ -14,8 +16,12 @@ export default function Layout() {
         <Link to="/" className="logo" onClick={close}>StyleAI</Link>
         <nav id="menu" className={open ? 'open' : ''} aria-label="Основное меню">
           <NavLink to="/discover" onClick={close}>Discover</NavLink>
+          <NavLink to="/stylist" onClick={close}>AI Stylist</NavLink>
           <NavLink to="/wardrobe" onClick={close}>My Wardrobe</NavLink>
           <NavLink to="/favorites" onClick={close}>Избранное</NavLink>
+          <NavLink to="/saved-looks" onClick={close}>Образы</NavLink>
+          <NavLink to="/orders" onClick={close}>Заказы</NavLink>
+          <NavLink to="/cart" onClick={close}>Корзина ({count})</NavLink>
           {user ? <button className="tbtn" onClick={() => { close(); signOut() }}>Выйти</button>
                 : <NavLink to="/login" onClick={close}>Войти</NavLink>}
           <button className="tbtn" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}</button>

@@ -1,8 +1,8 @@
+import { Link } from 'react-router-dom'
 export default function ProductCard({ p, fav, onFav, onWardrobe }) {
   return (
     <article className="card">
-      <span className="sw" style={{ background: p.hex }} />
-      <h3>{p.name}</h3>
+      <Link to={`/product/${p.id}`}><span className="sw" style={{ background: p.hex, display: 'block' }} /><h3>{p.name}</h3></Link>
       <p>{p.color} · ${p.price}</p>
       <div className="row">
         <button className="save" onClick={() => onWardrobe(p)}>В гардероб</button>
