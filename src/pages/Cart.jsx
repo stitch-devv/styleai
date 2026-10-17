@@ -4,7 +4,9 @@ import { supabase, ok } from '../lib/supabase'
 import { useAuth } from '../auth'
 import { useCart } from '../cart'
 import { Empty } from '../components/State'
+import { useT } from '../i18n'
 export default function Cart() {
+  const t = useT()
   const { items, setQty, clear, total } = useCart()
   const { user } = useAuth()
   const nav = useNavigate()
@@ -20,18 +22,18 @@ export default function Cart() {
   }
   return (
     <section style={{ maxWidth: 640 }}>
-      <h2>Корзина</h2>
-      {!items.length ? <Empty>Корзина пуста. <Link to="/discover">Выбрать вещи</Link>.</Empty> : <>
+      <h2>{t('Корзина')}</h2>
+      {!items.length ? <Empty>{t('Корзина пуста.')} <Link to="/discover">{t('Выбрать вещи')}</Link></Empty> : <>
         {items.map(i => (
           <div key={i.id + i.size} className="slot" style={{ marginBottom: 6 }}>
             <span className="sw" style={{ background: i.hex }} /><span><b>{i.name}</b><small>{i.size} · ${i.price * i.qty}</small></span>
             <span className="chips" style={{ marginLeft: 'auto' }}>
               <button className="chip" aria-label="Меньше" onClick={() => setQty(i.id, i.size, i.qty - 1)}>−</button>{i.qty}
               <button className="chip" aria-label="Больше" onClick={() => setQty(i.id, i.size, i.qty + 1)}>+</button></span></div>))}
-        <p style={{ fontSize: 22, margin: '20px 0 12px' }}><b>Итого: ${total}</b></p>
+        <p style={{ fontSize: 22, margin: '20px 0 12px' }}><b>{t('Итого')}: ${total}</b></p>
         <p className="why" role="alert">{err}</p>
-        <button className="btn" disabled={busy} onClick={checkout}>{busy ? 'Оформляем…' : 'Оформить демо-заказ'}</button>
-        <p className="why" style={{ marginTop: 8 }}>Оплата не проводится: это демонстрационный заказ.</p></>}
+        <button className="btn" disabled={busy} onClick={checkout}>{busy ? t('Оформляем…') : t('Оформить демо-заказ')}</button>
+        <p className="why" style={{ marginTop: 8 }}>{t('Оплата не проводится: это демонстрационный заказ.')}</p></>}
     </section>
   )
 }

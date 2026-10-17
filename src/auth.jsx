@@ -4,7 +4,7 @@ const Ctx = createContext(null)
 export const useAuth = () => useContext(Ctx)
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
-  const [role, setRole] = useState('user')
+  const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); setLoading(false) })
@@ -13,9 +13,10 @@ export function AuthProvider({ children }) {
   }, [])
   useEffect(() => {
     if (!session) return setRole('user')
+    setRole(null)
     supabase.from('profiles').select('role').eq('id', session.user.id).single().then(({ data }) => setRole(data?.role || 'user'))
   }, [session])
-  const value = { user: session?.user ?? null, role, loading,
+  const value = { user: session?.user ?? null, role: role || 'user', loading: loading || role === null,
     signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
     signUp: (email, password) => supabase.auth.signUp({ email, password }),
     signOut: () => supabase.auth.signOut() }

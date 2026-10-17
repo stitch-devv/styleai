@@ -1,18 +1,26 @@
+import { useState } from 'react'
 import { supabase, ok } from '../lib/supabase'
 import { useAsync } from '../lib/useAsync'
 import { Loading, Empty, ErrorBox } from '../components/State'
+import ManageGrid from '../components/ManageGrid'
+import ProductModal from '../components/ProductModal'
+import { useT } from '../i18n'
 export default function Wardrobe() {
-  const { data, loading, error, reload } = useAsync(async () => ok(await supabase.from('wardrobe_items').select('*').order('id', { ascending: false })), [])
-  const remove = async id => { if (confirm('Убрать вещь из гардероба?')) { ok(await supabase.from('wardrobe_items').delete().eq('id', id)); reload() } }
+  const t = useT()
+  const [open, setOpen] = useState(null)
+  const { data, loading, error, reload } = useAsync(async () =>
+    ok(await supabase.from('wardrobe_items').select('id,name,hex,category,products(*)').order('id', { ascending: false })), [])
+  const del = async ids => { ok(await supabase.from('wardrobe_items').delete().in('id', ids)); reload() }
+  const items = (data || []).map(w => ({ id: w.id, name: w.name, hex: w.hex, sub: w.products ? '$' + w.products.price : '',
+    full: w.products || { name: w.name, hex: w.hex, color: '', category: w.category } }))
   return (
     <section>
       <h2>My Wardrobe</h2>
-      <p className="sub">Вещи, которые у тебя уже есть. Стилист использует их бесплатно.</p>
+      <p className="sub">{t('Вещи, которые у тебя уже есть. Стилист использует их бесплатно.')}</p>
       {loading ? <Loading /> : error ? <ErrorBox error={error} onRetry={reload} /> :
-        !data.length ? <Empty>Гардероб пуст. Добавь вещи в Discover.</Empty> :
-        <div className="wgrid">{data.map(i => (
-          <button key={i.id} className="w" onClick={() => remove(i.id)} aria-label={`Убрать: ${i.name}`}>
-            <span className="sw" style={{ display: 'block', background: i.hex }} />{i.name}<small>убрать</small></button>))}</div>}
+        !items.length ? <Empty>{t('Гардероб пуст. Добавь вещи в Discover.')}</Empty> :
+        <ManageGrid items={items} onOpen={i => setOpen(i.full)} onDelete={del} />}
+      {open && <ProductModal product={open} onClose={() => setOpen(null)} />}
     </section>
   )
 }

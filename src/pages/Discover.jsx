@@ -5,10 +5,12 @@ import { useAsync } from '../lib/useAsync'
 import { useAuth } from '../auth'
 import ProductCard from '../components/ProductCard'
 import { Loading, Empty, ErrorBox } from '../components/State'
+import { useT } from '../i18n'
 const PAGE = 12
 export default function Discover() {
   const { user } = useAuth()
   const nav = useNavigate()
+  const t = useT()
   const [q, setQ] = useState(''), [cat, setCat] = useState('all'), [sort, setSort] = useState('new'), [page, setPage] = useState(0)
   const [note, setNote] = useState('')
   const { data, loading, error, reload } = useAsync(async () => {
@@ -30,7 +32,7 @@ export default function Discover() {
   })
   const toWardrobe = need(async p => {
     ok(await supabase.from('wardrobe_items').insert({ product_id: p.id, name: p.name, category: p.category, hex: p.hex }))
-    setNote(`«${p.name}» добавлено в гардероб.`)
+    setNote(`«${p.name}» ${t('добавлено в гардероб.')}`)
   })
   const pages = data ? Math.ceil(data.count / PAGE) : 0
   const f = fn => e => { fn(e.target.value); setPage(0) }
@@ -38,21 +40,21 @@ export default function Discover() {
     <section>
       <h2>Discover</h2>
       <div className="tools">
-        <input type="search" placeholder="Поиск по названию" aria-label="Поиск" value={q} onChange={f(setQ)} />
+        <input type="search" placeholder={t('Поиск по названию')} aria-label="Поиск" value={q} onChange={f(setQ)} />
         <select aria-label="Категория" value={cat} onChange={f(setCat)}>
-          <option value="all">Все категории</option><option value="top">Верх</option><option value="bottom">Низ</option>
-          <option value="shoes">Обувь</option><option value="outer">Верхняя одежда</option></select>
+          <option value="all">{t('Все категории')}</option><option value="top">{t('Верх')}</option><option value="bottom">{t('Низ')}</option>
+          <option value="shoes">{t('Обувь')}</option><option value="outer">{t('Верхняя одежда')}</option></select>
         <select aria-label="Сортировка" value={sort} onChange={f(setSort)}>
-          <option value="new">По умолчанию</option><option value="asc">Цена ниже</option><option value="desc">Цена выше</option></select>
+          <option value="new">{t('По умолчанию')}</option><option value="asc">{t('Цена ниже')}</option><option value="desc">{t('Цена выше')}</option></select>
       </div>
       <p className="why" role="status">{note}</p>
       {loading ? <Loading /> : error ? <ErrorBox error={error} onRetry={reload} /> :
-        !data.rows.length ? <Empty>Ничего не найдено. <button className="chip" onClick={() => { setQ(''); setCat('all'); setSort('new'); setPage(0) }}>Сбросить фильтры</button></Empty> :
+        !data.rows.length ? <Empty>{t('Ничего не найдено.')} <button className="chip" onClick={() => { setQ(''); setCat('all'); setSort('new'); setPage(0) }}>{t('Сбросить фильтры')}</button></Empty> :
         <div className="dgrid">{data.rows.map(p => <ProductCard key={p.id} p={p} fav={set.has(p.id)} onFav={toggleFav} onWardrobe={toWardrobe} />)}</div>}
       {pages > 1 && <div className="chips" style={{ marginTop: 24 }}>
-        <button className="chip" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Назад</button>
+        <button className="chip" disabled={page === 0} onClick={() => setPage(p => p - 1)}>{t('Назад')}</button>
         <span className="why">{page + 1} / {pages}</span>
-        <button className="chip" disabled={page + 1 >= pages} onClick={() => setPage(p => p + 1)}>Вперёд</button></div>}
+        <button className="chip" disabled={page + 1 >= pages} onClick={() => setPage(p => p + 1)}>{t('Вперёд')}</button></div>}
     </section>
   )
 }

@@ -24,7 +24,7 @@ export function buildLooks({ products, owned, occasion, style, budget, offset = 
   }
   return out
 }
-export const why = (l, owned) => {
+export const why = (l, owned, t = x => x) => {
   const n = SLOTS.filter(k => l[k] && owned.has(l[k].id)).length
-  return `Светлое и тёмное чередуются: ${l.top.name.toLowerCase()} сверху, ${l.bottom.name.toLowerCase()} снизу. ` + (n ? `Уже есть вещей: ${n}.` : 'Все вещи новые.')
+  return `${t('Светлое и тёмное чередуются:')} ${l.top.name.toLowerCase()} ${t('сверху')}, ${l.bottom.name.toLowerCase()} ${t('снизу')}. ` + (n ? `${t('Уже есть вещей')}: ${n}.` : t('Все вещи новые.'))
 }
