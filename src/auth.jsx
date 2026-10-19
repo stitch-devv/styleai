@@ -19,6 +19,8 @@ export function AuthProvider({ children }) {
   const value = { user: session?.user ?? null, role: role || 'user', loading: loading || role === null,
     signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
     signUp: (email, password) => supabase.auth.signUp({ email, password }),
-    signOut: () => supabase.auth.signOut() }
+    signOut: () => supabase.auth.signOut(),
+    resetPassword: email => supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' }),
+    updatePassword: password => supabase.auth.updateUser({ password }) }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

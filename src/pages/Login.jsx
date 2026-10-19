@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useT } from '../i18n'
 export default function Login() {
@@ -27,6 +27,7 @@ export default function Login() {
         <p role="alert" className="why">{msg}</p>
         <button className="btn" type="submit">{up ? t('Создать аккаунт') : t('Войти')}</button>
         <button className="chip" type="button" onClick={() => setUp(u => !u)}>{up ? t('Уже есть аккаунт') : t('Нет аккаунта')}</button>
+      {!up && <Link className="why" to="/forgot-password">{t('Забыли пароль?')}</Link>}
       </form>
     </section>
   )

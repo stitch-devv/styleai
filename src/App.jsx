@@ -14,6 +14,8 @@ import Orders from './pages/Orders'
 import SavedLooks from './pages/SavedLooks'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 function Protected({ children, admin }) {
   const { user, role, loading } = useAuth()
   if (loading) return <Loading />
@@ -28,6 +30,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/stylist" element={<Stylist />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
